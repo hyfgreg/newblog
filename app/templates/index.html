@@ -8,7 +8,7 @@
     {% if name %}
     <p>你已经登录。</p>
     {% else %}
-    <p>你还没登录</p>
+    <p>你还没<a href="{{url_for('admin.login')}}">登录</a></p>
     {% endif %}
 </div>
 {% endblock %}

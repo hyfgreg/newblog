@@ -3,7 +3,7 @@ from . import admin
 from .forms import LoginForm
 from ..models import User
 from werkzeug.security import generate_password_hash, check_password_hash
-from ..tools.myLogin import should_not_login, if_admin_registered
+from ..tools.myLogin import should_login,should_not_login, if_admin_registered
 import logging
 
 # 去掉链接末尾的/，这是个大坑，比如/admin/register可以访问，但是/admin/register/就不可以访问了
@@ -38,6 +38,13 @@ def login():
         flash('大兄弟，密码可不能乱来！')
     return render_template('admin/login.html', form=form)
 
+
+@admin.route('/logout',methods=['GET'])
+@should_login
+def logout():
+    session.pop('name_hash',None)
+    flash('你已经注销了！！！')
+    return redirect(url_for('main.index'))
 
 @admin.route('/register', methods=['GET', 'POST'])
 @if_admin_registered

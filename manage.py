@@ -4,10 +4,15 @@ from app import create_app, db
 from app.models import User, Role
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
+from app.tools.myLogin import check_login
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
+
+@app.context_processor
+def get_check_login():
+    return dict(check_login = check_login)
 
 
 def make_shell_context():

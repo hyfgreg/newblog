@@ -4,12 +4,16 @@ from ..models import User
 from ..email import send_email
 from . import main
 from .forms import NameForm
+from ..tools.myLogin import check_login
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    name_hash = request.cookies.get('name_hash',None)
-    if name_hash and name_hash == session['name_hash']:
+    # name_hash = request.cookies.get('name_hash',None)
+    # # print(session['name_hash'])
+    # name_hash_sess = session.get('name_hash',None)
+    # if name_hash and name_hash_sess and name_hash == name_hash_sess:
+    if check_login():
         return render_template('index.html',
                            name =session.get('username'))
     return render_template('index.html')
