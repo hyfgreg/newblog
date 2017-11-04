@@ -1,0 +1,11 @@
+您好！ {{ user.username }},
+
+欢迎开启博客之旅!
+
+为了确认您的账号，请点击下面的链接:
+
+{{ url_for('admin.confirm', token=token, _external=True) }}
+
+来自小黄的博客
+
+注意：回复这封邮件可没有用哦~！

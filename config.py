@@ -12,8 +12,8 @@ class Config:
     MAIL_USE_SSL = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'hyfgreg'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'Zhangxia2008111'
-    FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
-    FLASKY_MAIL_SENDER = 'Flasky Admin <hyfgreg@163.com>'
+    FLASKY_MAIL_SUBJECT_PREFIX = '[小黄的博客]'
+    FLASKY_MAIL_SENDER = '小黄的博客 <hyfgreg@163.com>'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN') or 'hyfgreg@163.com'
     # FLASKY_POSTS_PER_PAGE = 20
     # FLASKY_COMMENTS_PER_PAGE = 20
