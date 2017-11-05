@@ -44,8 +44,10 @@ def login():
 @should_login
 def logout():
     session.pop('name_hash',None)
+    resp = make_response(redirect(url_for('main.index')))
+    resp.set_cookie('name_hash','')
     flash('你已经注销了！！！')
-    return redirect(url_for('main.index'))
+    return resp
 
 @admin.route('/register', methods=['GET', 'POST'])
 @if_admin_registered
@@ -68,7 +70,7 @@ def register():
     return render_template('admin/register.html',form = form)
 
 @admin.route('/confirm/<token>')
-@should_login
+# @should_login
 def confirm(token):
     user = User.query.filter_by(role_id = 1).first()
     if user.confirmed:

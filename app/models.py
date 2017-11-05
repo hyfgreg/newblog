@@ -2,7 +2,7 @@ from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flask import current_app
+from flask import current_app,flash
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -33,8 +33,10 @@ class User(UserMixin,db.Model):
         try:
             data = s.loads(token)
         except:
+            flash('wrong token')
             return False
         if data.get('confirm') != self.id:
+            flash('wrong id')
             return False
         self.confirmed = True
         db.session.add(self)
