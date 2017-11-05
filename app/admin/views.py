@@ -1,15 +1,18 @@
-from flask import url_for,request, render_template, flash, make_response, session, redirect
+from flask import url_for, request, render_template, flash, make_response, session, redirect, current_app
 from . import admin
 from .forms import LoginForm, RegistrationForm
 from ..models import User,db
 from werkzeug.security import generate_password_hash, check_password_hash
-from ..tools.myLogin import should_login,should_not_login, if_admin_registered
+from ..tools.myLogin import should_login,should_not_login, if_admin_registered,check_login
 from ..email import send_email
 import logging
+# app = current_app._get_current_object()
 
 # 去掉链接末尾的/，这是个大坑，比如/admin/register可以访问，但是/admin/register/就不可以访问了
 # 但是奇怪的是，/admin/register这样子，flask会自动处理成/admin/register/
 # 但是直接在末尾加一个/就不能访问了，实在是太奇怪了！！！
+
+
 @admin.before_app_request
 def clear_trailing():
     rp = request.path
@@ -20,6 +23,16 @@ def clear_trailing():
             rp = rp + '?' + request.query_string
         return redirect(rp)
 
+@admin.before_app_request
+def check_confirm():
+    if check_login():
+        if not session.get('user_help',None):
+            user = User.query.filter_by(role_id =1).first()
+            session['user_flag'] = {'flag':user.confirmed}
+        if not session['user_flag']['flag'] \
+            and request.endpoint[:6] != 'admin.' \
+            and request.endpoint != 'static':
+            return redirect(url_for('admin.unconfirmed'))
 
 
 @admin.route('/', methods=['GET', 'post'])
@@ -35,6 +48,7 @@ def login():
             session['username'] = user.username
             resp = make_response(redirect(url_for('main.index')))
             resp.set_cookie('name_hash', name_hash)
+
             return resp
         flash('大兄弟，密码可不能乱来！')
     return render_template('admin/login.html', form=form)
@@ -80,3 +94,7 @@ def confirm(token):
     else:
         flash('验证地址无效或者已过期')
     return redirect(url_for('main.index'))
+
+@admin.route('/unconfirmed')
+def unconfirmed():
+    return '<h1>这是一个unconfirmed页面</h1>'
