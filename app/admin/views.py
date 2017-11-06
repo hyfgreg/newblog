@@ -28,8 +28,8 @@ def check_confirm():
     if check_login():
         if not session.get('user_help',None):
             user = User.query.filter_by(role_id =1).first()
-            session['user_flag'] = {'flag':user.confirmed}
-        if not session['user_flag']['flag'] \
+            session['user_help'] = {'flag':user.confirmed}
+        if not session['user_help']['flag'] \
             and request.endpoint[:6] != 'admin.' \
             and request.endpoint != 'static':
             return redirect(url_for('admin.unconfirmed'))
@@ -49,6 +49,7 @@ def login():
             resp = make_response(redirect(url_for('main.index')))
             resp.set_cookie('name_hash', name_hash)
 
+            session['user_help'] = {'flag': user.confirmed}
             return resp
         flash('大兄弟，密码可不能乱来！')
     return render_template('admin/login.html', form=form)
@@ -58,6 +59,7 @@ def login():
 @should_login
 def logout():
     session.pop('name_hash',None)
+    session.pop('user_help',None)
     resp = make_response(redirect(url_for('main.index')))
     resp.set_cookie('name_hash','')
     flash('你已经注销了！！！')
@@ -78,7 +80,7 @@ def register():
         send_email(user.email,'请验证您的账号！！！',
                    template='admin/email/confirm',user = user,token = token)
 
-
+        session['user_help'] = {'flag': user.confirmed}
         flash('你已经注册，在登录后需首先验证账号！')
         return redirect(url_for('admin.login'))
     return render_template('admin/register.html',form = form)
@@ -90,6 +92,7 @@ def confirm(token):
     if user.confirmed:
         return redirect(url_for('main.index'))
     if user.confirm(token):
+        session['user_help']['flag'] = True
         flash('您的账号已经验证！')
     else:
         flash('验证地址无效或者已过期')
@@ -97,4 +100,18 @@ def confirm(token):
 
 @admin.route('/unconfirmed')
 def unconfirmed():
-    return '<h1>这是一个unconfirmed页面</h1>'
+    if not check_login() or session['user_help']['flag']:
+        return redirect(url_for('main.index'))
+    flash(session['user_help']['flag'])
+    return render_template('admin/unconfirmed.html')
+
+@admin.route('/confirm')
+@should_login
+def resend_confirmation():
+    user = User.query.filter_by(role_id = 1).first()
+    token = user.generate_confirmation_token()
+    send_email(user.email, '请验证您的账号！！！',
+               template='admin/email/confirm', user=user, token=token)
+
+    flash('邮件已经重新发送，请查收！')
+    return redirect(url_for('main.index'))

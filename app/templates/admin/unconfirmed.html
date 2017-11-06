@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}小黄的博客 - 验证账号{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>
+        您好！
+    </h1>
+    <h3>您还未验证您的账号.</h3>
+    <p>
+        在开始<b>小黄的博客</b>之旅之前，您需要验证您的账号。
+    </p>
+    <p>
+        如果需要一封新的邮件，请点击右侧的链接 <b>——></b>
+        <a href="{{ url_for('admin.resend_confirmation') }}">点我</a>！！！
+    </p>
+</div>
+{% endblock %}
