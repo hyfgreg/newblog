@@ -10,6 +10,6 @@
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
     <br>
-    <p>第一次登录? <a href="{{ url_for('main.index') }}">点击这里进行注册</a>.</p>
+    <p>忘记密码？ <a href="{{ url_for('admin.password_reset_request') }}">点击这里重设密码</a>.</p>
 </div>
 {% endblock %}

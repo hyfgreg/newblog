@@ -1,6 +1,6 @@
 from flask import url_for, request, render_template, flash, make_response, session, redirect, current_app
 from . import admin
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm,PasswordRestRequestForm,PasswordResetForm,EmailResetRequestForm
 from ..models import User,db
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..tools.myLogin import should_login,should_not_login, if_admin_registered,check_login
@@ -115,3 +115,93 @@ def resend_confirmation():
 
     flash('邮件已经重新发送，请查收！')
     return redirect(url_for('main.index'))
+
+@admin.route('/change-password',methods = ['GET','POST'])
+@should_login
+def change_password():
+    form = ChangePasswordForm()
+    user = User.query.filter_by(role_id = 1).first()
+    if form.validate_on_submit():
+        if user.email != form.email.data:
+            flash('邮箱错误！')
+            return redirect(url_for('admin.change_password'))
+        elif user.verify_password(form.old_password.data):
+            user.password = form.new_password.data
+            db.session.add(user)
+            flash('修改密码成功')
+            return redirect(url_for('main.index'))
+        else:
+            flash('旧密码错误！！')
+            return redirect(url_for('admin.change_password'))
+    return render_template('admin/change_password.html',form = form)
+
+@admin.route('/reset',methods = ['GET','POST'])
+@should_not_login
+@if_admin_registered
+def password_reset_request():
+    form = PasswordRestRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(role_id=1).first()
+        if user.email != form.email.data:
+            flash('邮箱错误！')
+            return redirect(url_for('admin.password_reset_request'))
+        else:
+            token = user.generate_reset_password_token(form.email.data)
+            send_email(user.email, '请求重置密码',
+                       template='admin/email/reset_password', user=user, token=token,next = request.args.get('next'))
+            flash('一封邮件已经发送至您的邮箱，请查收！')
+            return redirect(url_for('admin.login'))
+    return render_template('admin/reset_password.html',form = form)
+
+
+@admin.route('/reset/<token>',methods = ['GET','POST'])
+@should_not_login
+@if_admin_registered
+def reset_password(token):
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(role_id = 1).first()
+        if user.reset_password(token,form.new_password.data):
+            flash('重置密码成功！')
+            return redirect(url_for('admin.login'))
+        else:
+            return redirect(url_for('main.index'))
+    return render_template('admin/reset_password.html',form = form)
+
+@admin.route('/change_email',methods = ['GET','POST'])
+@should_login
+@if_admin_registered
+def change_email_request():
+    form = EmailResetRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.old_email.data).first()
+        if not user:
+            flash('原始邮箱不正确！')
+            return redirect(url_for('main.index'))
+        elif user.verify_password(form.password.data):
+            token = user.generate_change_email_token(form.new_email.data)
+            send_email(form.new_email.data,'请验证新邮箱',
+                       template='admin/email/change_email',user = user,token = token)
+            flash('一封邮件已发送至您的新邮箱，请查收！')
+            return redirect(url_for('main.index'))
+        else:
+            flash('密码错误！')
+            return redirect(url_for('main.index'))
+    return render_template('admin/change_email.html',form = form)
+
+@admin.route('/change_email/<token>')
+@should_login
+def change_email(token):
+    user = User.query.filter_by(role_id = 1).first()
+    if user.change_email(token):
+        session.pop('name_hash', None)
+        session.pop('user_help', None)
+        resp = make_response(redirect(url_for('admin.login')))
+        resp.set_cookie('name_hash', '')
+        flash('修改邮箱成功！请重新登录')
+        return resp
+    else:
+        flash('请求无效！')
+    return redirect(url_for('main.index'))
+
+

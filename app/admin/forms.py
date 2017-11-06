@@ -29,3 +29,27 @@ class RegistrationForm(FlaskForm):
     def validate_username(self,field):
         if User.query.filter_by(username = field.data).first():
             raise ValidationError('用户名已存在！！！')
+
+class ChangePasswordForm(FlaskForm):
+    email = StringField('邮箱',validators=[Required(),Length(1,64),Email()])
+    old_password = PasswordField('旧密码',validators=[Required(),])
+    new_password = PasswordField('新密码',validators=[Required(),EqualTo('new_password2',message='请输入相同密码！！！')])
+    new_password2 = PasswordField('确认新密码', validators=[Required(), ])
+    submit = SubmitField('提交')
+
+class PasswordRestRequestForm(FlaskForm):
+    email = StringField('邮箱', validators=[Required(), Length(1, 64), Email()])
+    submit = SubmitField('提交')
+
+
+class PasswordResetForm(FlaskForm):
+    new_password = PasswordField('新密码', validators=[Required(), EqualTo('new_password2', message='请输入相同密码！！！')])
+    new_password2 = PasswordField('确认新密码', validators=[Required(), ])
+    submit = SubmitField('提交')
+
+class EmailResetRequestForm(FlaskForm):
+    old_email = StringField('旧邮箱',validators=[Required(),Length(1,64),Email()])
+    password  = PasswordField('密码',validators=[Required(),])
+    new_email = StringField('新邮箱',validators=[Required(),Length(1,64),Email(),EqualTo('new_email2', message='请输入相同邮箱！！！')])
+    new_email2 = StringField('确认新邮箱',validators=[Required(),Length(1,64),Email()])
+    submit = SubmitField('提交')

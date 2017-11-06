@@ -1,0 +1,10 @@
+您好！ {{ user.username }},
+
+为了确认您的新账号，请点击下面的链接:
+
+{{ url_for('admin.change_email', token=token, _external=True) }}
+
+来自小黄的博客
+
+注意：回复这封邮件可没有用哦~！
+

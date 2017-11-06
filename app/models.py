@@ -33,7 +33,7 @@ class User(UserMixin,db.Model):
         try:
             data = s.loads(token)
         except:
-            flash('wrong token')
+            flash('token错误！')
             return False
         if data.get('confirm') != self.id:
             flash('wrong id')
@@ -41,6 +41,48 @@ class User(UserMixin,db.Model):
         self.confirmed = True
         db.session.add(self)
         return True
+
+    def generate_reset_password_token(self,email,expiration = 3600):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'reset_confirm':email})
+
+    def reset_password(self,token,new_password):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            flash('token错误！')
+            return False
+        if data.get('reset_confirm') != self.email:
+            flash('邮箱错误！')
+            return False
+        self.password = new_password
+        db.session.add(self)
+        return True
+
+    def generate_change_email_token(self,new_email):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        return s.dumps({'new_email':new_email,'change_email':self.id})
+
+    def change_email(self,token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            flash('token错误！')
+            return False
+        if data.get('change_email') != self.id:
+            flash('token 后面有错！')
+            return False
+        new_email = data.get('new_email')
+        if new_email is None:
+            return False
+        if self.query.filter_by(email  = new_email).first() is not None:
+            return False
+        self.email = new_email
+        db.session.add(self)
+        return True
+
 
     @property
     def password(self):
