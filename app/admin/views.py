@@ -49,7 +49,7 @@ def login():
             resp = make_response(redirect(url_for('main.index')))
             resp.set_cookie('name_hash', name_hash)
 
-            session['user_help'] = {'flag': user.confirmed}
+            session['user_help'] = {'flag': user.confirmed,'user_id':user.id}
             return resp
         flash('大兄弟，密码可不能乱来！')
     return render_template('admin/login.html', form=form)
@@ -80,7 +80,7 @@ def register():
         send_email(user.email,'请验证您的账号！！！',
                    template='admin/email/confirm',user = user,token = token)
 
-        session['user_help'] = {'flag': user.confirmed}
+        session['user_help'] = {'flag': user.confirmed,'user_id':user.id}
         flash('你已经注册，在登录后需首先验证账号！')
         return redirect(url_for('admin.login'))
     return render_template('admin/register.html',form = form)

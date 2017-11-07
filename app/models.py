@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
@@ -22,6 +24,7 @@ class User(UserMixin,db.Model):
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash  = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean,default = False)
+    posts = db.relationship('Post',backref = 'author', lazy = 'dynamic')
 
 
     def generate_confirmation_token(self,expiration = 3600):
@@ -97,3 +100,12 @@ class User(UserMixin,db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64),unique = True,index = True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))

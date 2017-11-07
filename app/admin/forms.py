@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,TextAreaField
 from wtforms.validators import Required, Length, Email,Regexp,EqualTo,ValidationError
 from ..models import User
 
@@ -52,4 +52,9 @@ class EmailResetRequestForm(FlaskForm):
     password  = PasswordField('密码',validators=[Required(),])
     new_email = StringField('新邮箱',validators=[Required(),Length(1,64),Email(),EqualTo('new_email2', message='请输入相同邮箱！！！')])
     new_email2 = StringField('确认新邮箱',validators=[Required(),Length(1,64),Email()])
+    submit = SubmitField('提交')
+
+class PostForm(FlaskForm):
+    title = StringField('标题',validators=[Required(),Length(1,512)])
+    body = TextAreaField('写点什么吧~',validators=[Required()])
     submit = SubmitField('提交')
