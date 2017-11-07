@@ -109,3 +109,17 @@ class Post(db.Model):
     body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    @staticmethod
+    def generate_fake(count = 100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        u = User.query.filter_by(role_id = 1).first()
+        for i in range(count):
+            p = Post(title = '第{}篇测试文章'.format(i+2),body = forgery_py.lorem_ipsum.sentences(randint(1,3)),
+                     timestamp = forgery_py.date.date(True),
+                     author = u)
+            db.session.add(p)
+            db.session.commit()

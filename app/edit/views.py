@@ -33,6 +33,7 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         # user = User.query.filter_by(role_id = 1).first()
+
         post = Post(title = form.title.data,
                     body = form.body.data,
                     author_id = session['user_help'].get('user_id'))
