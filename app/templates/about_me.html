@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}小黄的博客{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+<div class="page-header">
+    <img class="img-rounded profile-thumbnail" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1510154543068&di=7ac7dfc805f0fc7a0c04f13a8a0a1f82&imgtype=0&src=http%3A%2F%2Ff.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F0823dd54564e9258fcdbde2a9682d158cdbf4e02.jpg">
+    <div class="profile-header">
+        <h1>{{ user.username }}</h1>
+        {% if user.name or user.location %}
+        <p>
+            {% if user.name %}{{ user.name }}<br>{% endif %}
+            {% if user.location %}
+                From <a href="http://maps.google.com/?q={{ user.location }}">{{ user.location }}</a><br>
+            {% endif %}
+        </p>
+        {% endif %}
+
+        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+
+    </div>
+</div>
+{% endblock %}

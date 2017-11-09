@@ -5,6 +5,8 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app,flash
+from markdown import markdown
+import bleach
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -25,6 +27,10 @@ class User(UserMixin,db.Model):
     password_hash  = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean,default = False)
     posts = db.relationship('Post',backref = 'author', lazy = 'dynamic')
+
+    name = db.Column(db.String(64))
+    about_me = db.Column(db.Text())
+    location = db.Column(db.String(64))
 
 
     def generate_confirmation_token(self,expiration = 3600):
@@ -107,6 +113,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64),unique = True,index = True)
     body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -123,3 +130,15 @@ class Post(db.Model):
                      author = u)
             db.session.add(p)
             db.session.commit()
+
+    @staticmethod
+    def on_change_body(target, value, oldvalue, intiator):
+        allowed_tags = ['a','abbr','acronym','b','blockquote','code',
+                        'em','i','li','ol','pre','strong','ul',
+                        'h1','h2','h3','p']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value,output_format = 'html'),
+            tags = allowed_tags, strip=True
+        ))
+
+db.event.listen(Post.body, 'set', Post.on_change_body)

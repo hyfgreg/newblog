@@ -18,3 +18,13 @@ def index():
     return render_template('index.html',name = session.get('username'),posts = posts,pagination = pagination)
     # posts = Post.query.order_by(Post.timestamp.desc()).all()
     # return render_template('index.html',name = session.get('username'),posts = posts)
+
+@main.route('/post_<int:id>')
+def post_independent(id):
+    post = Post.query.filter_by(id = id).first()
+    return render_template('post_independent.html',post = post)
+
+@main.route('/about_me')
+def about_me():
+    user = User.query.filter_by(role_id = 1).first()
+    return render_template('about_me.html',user = user)
