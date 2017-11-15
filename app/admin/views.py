@@ -60,6 +60,7 @@ def login():
 def logout():
     session.pop('name_hash',None)
     session.pop('user_help',None)
+    session.pop('username',None)
     resp = make_response(redirect(url_for('main.index')))
     resp.set_cookie('name_hash','')
     flash('你已经注销了！！！')

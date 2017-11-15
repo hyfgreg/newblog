@@ -1,7 +1,10 @@
-{% extends "base.html" %}
+{% extends "newbase.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}小黄的博客-撰写新文章{% endblock %}
+{% block head %}
+{{super()}}
+<title>小黄的博客-撰写新文章</title>
+{% endblock %}
 {% block scripts %}
 {{super()}}
 {{pagedown.include_pagedown()}}

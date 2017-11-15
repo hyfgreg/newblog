@@ -1,6 +1,9 @@
-{% extends "base.html" %}
+{% extends "newbase.html" %}
 
-{% block title %}小黄的博客{% endblock %}
+{% block head %}
+{{super()}}
+<title>小黄的博客-关于我</title>
+{% endblock %}
 
 {% block page_content %}
 <div class="page-header">

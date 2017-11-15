@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    {%block head%}
+    {%endblock%}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyles.css') }}">
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/highlight.js/8.5/styles/monokai_sublime.min.css">
+    <link href="//cdn.bootcss.com/magnific-popup.js/1.0.0/magnific-popup.min.css" rel="stylesheet">
+
+
+    <link rel="canonical" href="http://www.ghostchina.com/"/>
+
+
+</head>
+<body>
+<!-- start header -->
+<header class="main-header"
+        style="background-image: url(http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg)"
+">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <!-- start logo -->
+            <a class="branding" href="{{url_for('main.index')}}" title="小黄的博客"><img
+                    src="{{ url_for('static', filename='logo.png') }}" alt="小黄的博客"></a>
+            <!-- end logo -->
+            <h2 class="text-hide">这是小黄的博客。</h2>
+
+            <img src="http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg" alt="小黄的博客"
+                 class="hide">
+        </div>
+    </div>
+</div>
+</header>
+<!-- end header -->
+
+<nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header">
+                        <span class="nav-toggle-button collapsed" data-toggle="collapse" data-target="#main-menu">
+                        <span class="sr-only">Toggle navigation</span>
+                        <i class="fa fa-bars"></i>
+                        </span>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        <li  role="presentation"><a href="{{ url_for('main.index') }}">首页</a></li>
+                        <li role="presentation"><a href="{{ url_for('main.about_me') }}">关于我</a></li>
+                        {% if check_login() %}
+                        <li role="presentation"><a href="{{ url_for('edit.new_post') }}">撰写新文章</a></li>
+                        {% endif %}
+                        {% if check_login() %}
+                        <li class="dropdown" role="presentation">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">账户<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('admin.change_password') }}">修改密码</a></li>
+                                <li><a href="{{ url_for('admin.change_email_request') }}">修改邮箱</a></li>
+                                <li><a href="{{ url_for('admin.logout') }}">注销</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li><a href="{{ url_for('admin.login') }}">登录</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- end navigation -->
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="//cdn.bootcss.com/fitvids/1.1.0/jquery.fitvids.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/8.5/highlight.min.js"></script>
+<script src="//cdn.bootcss.com/magnific-popup.js/1.0.0/jquery.magnific-popup.min.js"></script>
+<script>
+    $(document).ready(function () {
+    $('.menu li a').each(function () {
+        if($($(this))[0].href == String(window.location)){
+        $('.menu li').removeClass('nav-current');
+        $(this).parent().addClass('nav-current');
+        }
+    });
+});
+</script>
+{% block scripts %}
+{{ moment.include_moment() }}
+{% endblock %}
+</body>
+</html>
