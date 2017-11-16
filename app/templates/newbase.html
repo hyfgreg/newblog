@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     {%block head%}
     {%endblock%}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyles.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyles.css') }}">
+
 
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -18,11 +19,10 @@
 
 
 </head>
-<body>
+<body style="background: #ebebeb" class="home-template">
 <!-- start header -->
 <header class="main-header"
-        style="background-image: url(http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg)"
-">
+        style="background-image: url(http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg)">
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="collapse navbar-collapse" id="main-menu">
                     <ul class="menu">
-                        <li  role="presentation"><a href="{{ url_for('main.index') }}">首页</a></li>
+                        <li role="presentation"><a href="{{ url_for('main.index') }}">首页</a></li>
                         <li role="presentation"><a href="{{ url_for('main.about_me') }}">关于我</a></li>
                         {% if check_login() %}
                         <li role="presentation"><a href="{{ url_for('edit.new_post') }}">撰写新文章</a></li>
@@ -79,16 +79,18 @@
 <!-- end navigation -->
 
 {% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-        {{ message }}
-    </div>
-    {% endfor %}
+<section class="content-wrap">
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
 
-    {% block page_content %}{% endblock %}
-</div>
+        {% block page_content %}{% endblock %}
+    </div>
+</section>
 {% endblock %}
 
 
@@ -106,6 +108,11 @@
         }
     });
 });
+
+
+
+
+
 </script>
 {% block scripts %}
 {{ moment.include_moment() }}
