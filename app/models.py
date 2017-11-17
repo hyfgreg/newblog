@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from . import db
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -114,7 +114,7 @@ class Post(db.Model):
     title = db.Column(db.String(64),unique = True,index = True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime,index = True, default = datetime.now)
+    timestamp = db.Column(db.DateTime,index = True, default = datetime.datetime.now)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     @staticmethod
@@ -141,4 +141,49 @@ class Post(db.Model):
             tags = allowed_tags, strip=True
         ))
 
+
+
 db.event.listen(Post.body, 'set', Post.on_change_body)
+
+class BlogView(db.Model):
+    __tablename__ = 'blog_view'
+    id = db.Column(db.Integer, primary_key=True)
+    num_of_view = db.Column(db.BigInteger, default=0)
+    # timestamp = db.Column(db.DateTime, index=True, default=datetime.now)
+
+    @staticmethod
+    def insert_view():
+        view = BlogView(num_of_view=0)
+        db.session.add(view)
+        db.session.commit()
+
+    @staticmethod
+    def add_view():
+        view = BlogView.query.first()
+        view.num_of_view += 1
+        db.session.add(view)
+        db.session.commit()
+
+class BlogViewToday(db.Model):
+    __tablename__ = 'blog_view_today'
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.now)
+    timestamp_str = db.Column(db.String(64))
+
+    @staticmethod
+    def on_change_timestamp(target, value, oldvalue, intiator):
+        target.timestamp_str = datetime.datetime.strftime(value,'%Y%m%d')
+
+    @staticmethod
+    def insert_view():
+        view = BlogViewToday(timestamp = datetime.datetime.now()+datetime.timedelta(days=-3))
+        db.session.add(view)
+        db.session.commit()
+
+    @staticmethod
+    def add_today_view():
+        view = BlogViewToday(timestamp = datetime.datetime.now())
+        db.session.add(view)
+        db.session.commit()
+
+db.event.listen(BlogViewToday.timestamp, 'set', BlogViewToday.on_change_timestamp)

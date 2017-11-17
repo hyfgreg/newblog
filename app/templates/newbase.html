@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     {%block head%}
     {%endblock%}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyles.css') }}">
+
     <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
-
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mystyles.css') }}">
 
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -15,29 +15,27 @@
     <link href="//cdn.bootcss.com/magnific-popup.js/1.0.0/magnific-popup.min.css" rel="stylesheet">
 
 
-    <link rel="canonical" href="http://www.ghostchina.com/"/>
-
 
 </head>
 <body style="background: #ebebeb" class="home-template">
 <!-- start header -->
 <header class="main-header"
-        style="background-image: url(http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg)">
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
+        style="background-image: url({{ url_for('static', filename='header_image.jpg') }})">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
 
-            <!-- start logo -->
-            <a class="branding" href="{{url_for('main.index')}}" title="小黄的博客"><img
-                    src="{{ url_for('static', filename='logo.png') }}" alt="小黄的博客"></a>
-            <!-- end logo -->
-            <h2 class="text-hide">这是小黄的博客。</h2>
+                <!-- start logo -->
+                <a class="branding" href="{{url_for('main.index')}}" title="小黄的博客"><img
+                        src="{{ url_for('static', filename='logo.png') }}" alt="小黄的博客"></a>
+                <!-- end logo -->
+                <h2 class="text-hide">这是小黄的博客。</h2>
 
-            <img src="http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg" alt="小黄的博客"
-                 class="hide">
+                <img src="http://static.ghostchina.com/image/6/d1/fcb3879e14429d75833a461572e64.jpg" alt="小黄的博客"
+                     class="hide">
+            </div>
         </div>
     </div>
-</div>
 </header>
 <!-- end header -->
 
@@ -87,11 +85,38 @@
             {{ message }}
         </div>
         {% endfor %}
-
-        {% block page_content %}{% endblock %}
+        <div class="row">
+            {% block page_content %}{% endblock %}
+        </div>
     </div>
 </section>
 {% endblock %}
+
+<footer class="main-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="widget">
+                    <h4 class="title">最新文章</h4>
+                    {% include '_recent_posts.html' %}
+                </div>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-4"></div>
+        </div>
+    </div>
+</footer>
+<div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Copyright &copy; <a href="{{url_for('main.index')}}">小黄的博客</a></span>
+                |
+                <span><a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备15103927</a></span>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
@@ -113,9 +138,12 @@
 
 
 
+
+
 </script>
 {% block scripts %}
 {{ moment.include_moment() }}
+{{ moment.locale('zh-cn') }}
 {% endblock %}
 </body>
 </html>

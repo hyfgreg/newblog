@@ -1,0 +1,14 @@
+<div class="content recent-post">
+    {% for post in recent_posts()%}
+    <div class="recent-single-post">
+        <a href="{{url_for('main.post_independent',id = post.id)}}" class="post-title">{{post.title}}</a>
+    <div class="date">{{ moment(post.timestamp).format('LL') }}</div>
+    </div>
+
+
+    {% endfor%}
+</div>
+
+
+
+

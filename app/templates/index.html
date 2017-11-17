@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="row">
+
     <main class="col-md-8 main-content">
         <div class="post">
             <h1>你好, {% if name %}{{ name }}{% else %}你是谁？？？{% endif %}!</h1>
@@ -20,10 +20,10 @@
         </div>
         {% include '_newposts.html' %}
         {% if pagination %}
-        <div class="pagination">
+        <div class="pagination" style="float:right">
             {{ macros.pagination_widget(pagination,'.index')}}
         </div>
         {%endif%}
     </main>
-</div>
+    {% include '_sidebar.html' %}
 {% endblock %}

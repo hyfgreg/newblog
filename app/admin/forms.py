@@ -4,6 +4,10 @@ from wtforms.validators import Required, Length, Email,Regexp,EqualTo,Validation
 from ..models import User
 
 
+class TestForm(FlaskForm):
+    email = StringField('邮箱',validators=[Required(),Length(1,64),Email()])
+    submit = SubmitField('登录')
+
 class LoginForm(FlaskForm):
     email = StringField('邮箱', validators=[Required(),Length(1,64),Email()])
     password = PasswordField('密码', validators=[Required()])

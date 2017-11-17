@@ -1,6 +1,6 @@
 from flask import url_for, request, render_template, flash, make_response, session, redirect, current_app
 from . import admin
-from .forms import LoginForm, RegistrationForm, ChangePasswordForm,PasswordRestRequestForm,PasswordResetForm,EmailResetRequestForm
+from .forms import LoginForm, RegistrationForm, ChangePasswordForm,PasswordRestRequestForm,PasswordResetForm,EmailResetRequestForm, TestForm
 from ..models import User,db
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..tools.myLogin import should_login,should_not_login, if_admin_registered,check_login
@@ -40,6 +40,7 @@ def check_confirm():
 @if_admin_registered
 def login():
     form = LoginForm()
+    # form = TestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and user.verify_password(form.password.data):

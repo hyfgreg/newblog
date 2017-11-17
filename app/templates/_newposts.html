@@ -4,7 +4,7 @@
         <h1 class="post-title"><a href="{{url_for('main.post_independent',id = post.id)}}">{{ post.title }}</a></h1>
         <div class="post-meta">
             <span class="author">作者：{{post.author.username}}</span>&bull;
-            <time class="post-date">{{ moment(post.timestamp).fromNow() }}</time>
+            <time class="post-date">{{ moment(post.timestamp).format('LL') }}</time>
         </div>
     </div>
     <div class="featured-media"></div>
