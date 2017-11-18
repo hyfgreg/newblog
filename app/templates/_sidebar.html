@@ -1,7 +1,7 @@
 <aside class="col-md-4 sidebar">
     <div class="widget">
         <h4 class="title">访问量</h4>
-        <p>今日访问：<span class="badge">{{BlogViewToday.query.filter_by(timestamp_str=datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d')).count()}}</span></p>
+        <p>今日访问：<span class="badge">{{BlogViewToday.query.filter_by(timestamp=datetime.date.today()).first().count}}</span></p>
         <p>总访问：<span class="badge">{{BlogView.query.first().num_of_view}}</span></p>
     </div>
     <div class="widget">

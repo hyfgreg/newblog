@@ -15,6 +15,7 @@ body {
   background: #ebebeb!important;
   position: relative;
   font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "WenQuanYi Micro Hei", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  height:100%
 }
 h1,
 h2,
@@ -896,4 +897,14 @@ pre {
 
 .my-img {
 margin: 35px !important;
+}
+
+.flask-pagedown-input,.flask-pagedown-preview {
+padding: 7px 7px;
+border: 1px solid #ebebeb;
+border-radius:2px;
+background:#ffffff;
+min-height: 30em;
+width:100%;
+resize:none
 }

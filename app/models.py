@@ -167,23 +167,28 @@ class BlogView(db.Model):
 class BlogViewToday(db.Model):
     __tablename__ = 'blog_view_today'
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.now)
-    timestamp_str = db.Column(db.String(64))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.date.today)
+    # timestamp_str = db.Column(db.String(64))
+    count = db.Column(db.Integer,default = 0)
+
+    # @staticmethod
+    # def on_change_timestamp(target, value, oldvalue, intiator):
+    #     target.timestamp_str = datetime.datetime.strftime(value,'%Y%m%d')
 
     @staticmethod
-    def on_change_timestamp(target, value, oldvalue, intiator):
-        target.timestamp_str = datetime.datetime.strftime(value,'%Y%m%d')
-
-    @staticmethod
-    def insert_view():
-        view = BlogViewToday(timestamp = datetime.datetime.now()+datetime.timedelta(days=-3))
+    def insert_today_view():
+        view = BlogViewToday()
         db.session.add(view)
         db.session.commit()
 
     @staticmethod
     def add_today_view():
-        view = BlogViewToday(timestamp = datetime.datetime.now())
+        view  = BlogViewToday.query.filter_by(timestamp = datetime.date.today()).first()
+        if not view:
+            BlogViewToday.insert_today_view()
+            view = BlogViewToday.query.filter_by(timestamp=datetime.date.today()).first()
+        view.count += 1
         db.session.add(view)
         db.session.commit()
 
-db.event.listen(BlogViewToday.timestamp, 'set', BlogViewToday.on_change_timestamp)
+# db.event.listen(BlogViewToday.timestamp, 'set', BlogViewToday.on_change_timestamp)
