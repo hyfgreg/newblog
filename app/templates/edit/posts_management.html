@@ -1,0 +1,55 @@
+{% extends "newbase.html" %}
+{% import "_macros.html" as macros %}
+
+
+{% block head %}
+{{super()}}
+<title>小黄的博客</title>
+{% endblock %}
+
+{% block page_content %}
+
+<div class="col-md-8 col-center-block">
+    {% include '_edit_all_posts.html' %}
+    {% if pagination %}
+    <div class="pagination" style="float:right">
+        {{ macros.pagination_widget(pagination,'edit.posts_management')}}
+    </div>
+    {%endif%}
+</div>
+
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+function open_hide_post_ajax(id) {
+    $.post('{{url_for("edit.open_hide_post_ajax")}}',{
+        id:id
+    }).done(function () {
+        var label = '#post_label_'+id;
+        var btn = '#ohbtn_'+id
+        if($(label).hasClass('label-success')){
+            alert('修改该文章为<隐藏>')
+            $(label).removeClass('label-success');
+            $(label).addClass('label-info');
+            $(label).text('隐藏');
+            $(btn).removeClass('btn-info');
+            $(btn).addClass('btn-success');
+            $(btn).text('公开')
+
+        }
+        else{
+            alert('修改该文章为<公开>')
+            $(label).removeClass('label-info');
+            $(label).addClass('label-success');
+            $(label).text('公开')
+            $(btn).removeClass('btn-success');
+            $(btn).addClass('btn-info');
+            $(btn).text('隐藏')
+        }
+    }).fail(function(){
+        alert('改变文章失败！')
+    })
+}
+</script>
+{% endblock %}

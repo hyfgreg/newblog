@@ -7,12 +7,33 @@
 {% endblock %}
 
 {% block page_content %}
-<div class = 'page_header'>
-    <h1>{{post.title}}</h1>
-</div>
-<div>
-    <p>
-        {{post.body}}
-    </p>
-</div>
+<article class="post">
+    <div class="post-head">
+        <h1 class="post-title">{{ post.title }}</h1>
+        <div class="post-meta">
+            <span class="author">作者：{{post.author.username}}</span>&bull;
+            <time class="post-date">{{ moment(post.timestamp).format('LL') }}</time>
+        </div>
+    </div>
+    <div class="featured-media"></div>
+    <div class="post-content">
+        <p>
+            {% if post.body_html %}
+            {{ post.body_html | safe }}
+            {% else %}
+            {{ post.body }}
+            {% endif %}
+        </p>
+    </div>
+    <footer class="post-footer clearfix">
+        <div class="pull-left tag-list">
+            <i class="fa fa-folder-open-o"></i>
+
+        </div>
+        <div class="pull-right share">
+        </div>
+    </footer>
+    {% include "_comment.html" %}
+</article>
+
 {% endblock %}

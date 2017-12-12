@@ -1,6 +1,6 @@
 from flask import render_template, session, redirect, url_for, current_app,request
 from .. import db
-from ..models import User,Post,BlogView,BlogViewToday
+from ..models import User,Post,BlogView,BlogViewToday,Comment
 from ..email import send_email
 from . import main
 from .forms import NameForm
@@ -26,7 +26,9 @@ def post_independent(id):
     BlogView.add_view()
     BlogViewToday.add_today_view()
     post = Post.query.filter_by(id = id).first()
-    return render_template('post_independent.html',post = post)
+    # comment = Comment.query.filter_by(post = post).all()
+    comments = post.comment
+    return render_template('post_independent.html',post = post,comments = comments)
 
 @main.route('/about_me')
 def about_me():

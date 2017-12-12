@@ -116,6 +116,8 @@ class Post(db.Model):
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime,index = True, default = datetime.datetime.now)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    open_flag = db.Column(db.Boolean,default = True)
+    comment = db.relationship('Comment',backref = 'post')
 
     @staticmethod
     def generate_fake(count = 100):
@@ -141,9 +143,102 @@ class Post(db.Model):
             tags = allowed_tags, strip=True
         ))
 
+    @staticmethod
+    def make_all_open():
+        posts = Post.query.all()
+        for post in posts:
+            post.open_flag = True
+            db.session.add(post)
+
+        db.session.commit()
+
 
 
 db.event.listen(Post.body, 'set', Post.on_change_body)
+
+class Reply(db.Model):
+    __tablename__ = 'replies'
+    replier_id = db.Column(db.Integer,db.ForeignKey('comments.id'),primary_key = True)
+    replied_id = db.Column(db.Integer,db.ForeignKey('comments.id'),primary_key = True)
+    # timestamp = db.Column(db.DateTime,default = datetime.datetime.now)
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer,primary_key = True)
+    visitor_name = db.Column(db.String(64))
+    visitor_email = db.Column(db.String(64))
+    content = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default = datetime.datetime.now)
+    post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
+    comment_type = db.Column(db.String(64), default='comment')
+    reply_to = db.Column(db.String(128), default='notReply')
+
+    #我们在这里认为，评论→直接给文章的评论，回复→评论其他人的评论
+
+    # 底下这两个是回复
+    replied = db.relationship('Reply',foreign_keys = [Reply.replier_id],
+                                 backref = db.backref('replier',lazy = 'joined'),
+                                 lazy = 'dynamic',
+                                 cascade='all, delete-orphan')
+
+    replier = db.relationship('Reply',foreign_keys = [Reply.replied_id],
+                                 backref = db.backref('replied',lazy = 'joined'),
+                                 lazy = 'dynamic',
+                                 cascade = 'all, delete-orphan')
+
+    # 生成评论
+    @staticmethod
+    def generate_fake(count = 100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        post_count = Post.query.count()
+        for i in range(count):
+            p = Post.query.offset(randint(0, post_count-1)).first()
+            c = Comment(content = forgery_py.lorem_ipsum.sentences(randint(3,5)),
+                        timestamp = forgery_py.date.date(True),
+                        visitor_name = forgery_py.internet.user_name(True),
+                        visitor_email = forgery_py.internet.email_address(),
+                        post = p)
+            db.session.add(c)
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+
+    #生成回复
+    @staticmethod
+    def generate_fake_reply(count = 100):
+        from random import seed, randint
+        import forgery_py
+
+        seed()
+        comment_count = Comment.query.count()
+        for i in range(count):
+            replied = Comment.query.offset(randint(0,comment_count-1)).first()
+            c = Comment(content = forgery_py.lorem_ipsum.sentences(randint(3,5)),
+                        timestamp = forgery_py.date.date(True),
+                        visitor_name = forgery_py.internet.user_name(True),
+                        visitor_email = forgery_py.internet.email_address(),
+                        post = replied.post,
+                        comment_type = 'reply',
+                        reply_to = replied.visitor_name)
+            r = Reply(replier = c, replied = replied)
+            db.session.add(r)
+            db.session.commit()
+
+    def is_reply(self):
+        if self.replied.count() == 0:
+            return False
+        else:
+            return True
+
+    def replied_name(self):
+        if self.is_reply():
+            return self.replied.first().replied.visitor_name
+
+
 
 class BlogView(db.Model):
     __tablename__ = 'blog_view'

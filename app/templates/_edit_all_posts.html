@@ -1,0 +1,29 @@
+{% for post in posts%}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            文章标题：
+            <a target="_blank"  href="{{url_for('main.post_independent',id = post.id)}}">《 {{ post.title }} 》</a>
+            <time class="post-date pull-right"> 撰写时间：{{ moment(post.timestamp).format('LL') }}</time>
+        </h4>
+    </div>
+    <div class="panel-body">
+        <p class="pull-left">
+            状态：{% if post.open_flag %}
+            <span id = "post_label_{{post.id}}" class="label label-success">公开</span>
+            {% else %}
+            <span id = "post_label_{{post.id}}" class="label label-info">隐藏</span>
+            {% endif %}
+        </p>
+        <p class="pull-right">
+            <a href="{{ url_for('edit.edit_post',id = post.id)}}" role="button" class="btn btn-primary btn-sm">编辑</a>
+            {% if post.open_flag%}
+            <a href="javascript:open_hide_post_ajax('{{ post.id }}')" role="button" id="ohbtn_{{post.id}}"  class="btn btn-info btn-sm">隐藏</a>
+            {% else %}
+            <a href="javascript:open_hide_post_ajax('{{ post.id }}')" role="button" id="ohbtn_{{post.id}}" class="btn btn-success btn-sm">公开</a>
+            {% endif %}
+            <a href="#" role="button" class="btn btn-danger btn-sm">删除</a>
+        </p>
+    </div>
+</div>
+{%endfor%}

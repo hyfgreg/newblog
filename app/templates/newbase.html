@@ -53,6 +53,7 @@
                         <li role="presentation"><a href="{{ url_for('main.about_me') }}">关于我</a></li>
                         {% if check_login() %}
                         <li role="presentation"><a href="{{ url_for('edit.new_post') }}">撰写新文章</a></li>
+                        <li role="presentation"><a href="{{ url_for('edit.posts_management')}}">管理文章</a></li>
                         {% endif %}
                         {% if check_login() %}
                         <li class="dropdown" role="presentation">

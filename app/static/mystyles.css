@@ -908,3 +908,15 @@ min-height: 30em;
 width:100%;
 resize:none
 }
+
+/* posts_management */
+/*====================================================
+	posts_management
+====================================================*/
+
+.col-center-block {
+    float: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

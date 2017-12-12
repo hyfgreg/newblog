@@ -1,0 +1,19 @@
+<hr/>
+
+<ul id="comments" class="comments">
+    {% for c in comments %}
+    <li class="comment">
+        <div class="clearfix">
+            {% if c.comment_type == "comment" %}
+            <h4 class="pull-left">{{ c.visitor_name }}</h4>
+            {% else %}
+            <h4 class="pull-left">{{ c.visitor_name }} 回复：{{ c.replied_name() }}</h4>
+            {% endif %}
+            <p class="pull-right">{{ c.timestamp }}</p>
+        </div>
+        <p>
+            <em>{{ c.content }}</em>
+        </p>
+    </li>
+    {% endfor %}
+</ul>
