@@ -168,10 +168,12 @@ class Comment(db.Model):
     visitor_name = db.Column(db.String(64))
     visitor_email = db.Column(db.String(64))
     content = db.Column(db.Text)
+    content_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default = datetime.datetime.now)
     post_id = db.Column(db.Integer,db.ForeignKey('posts.id'))
     comment_type = db.Column(db.String(64), default='comment')
     reply_to = db.Column(db.String(128), default='notReply')
+    open_flag = db.Column(db.Boolean, default=True)
 
     #我们在这里认为，评论→直接给文章的评论，回复→评论其他人的评论
 
@@ -185,6 +187,16 @@ class Comment(db.Model):
                                  backref = db.backref('replied',lazy = 'joined'),
                                  lazy = 'dynamic',
                                  cascade = 'all, delete-orphan')
+
+    @staticmethod
+    def on_change_content(target, value, oldvalue, intiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        target.content_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True
+        ))
 
     # 生成评论
     @staticmethod
@@ -238,7 +250,7 @@ class Comment(db.Model):
         if self.is_reply():
             return self.replied.first().replied.visitor_name
 
-
+db.event.listen(Comment.content, 'set', Comment.on_change_content)
 
 class BlogView(db.Model):
     __tablename__ = 'blog_view'

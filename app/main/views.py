@@ -1,9 +1,9 @@
-from flask import render_template, session, redirect, url_for, current_app,request
+from flask import render_template, session, redirect, url_for, current_app, request, flash
 from .. import db
 from ..models import User,Post,BlogView,BlogViewToday,Comment
 from ..email import send_email
 from . import main
-from .forms import NameForm
+from . forms import CommentForm
 from ..tools.myLogin import check_login
 
 
@@ -21,14 +21,26 @@ def index():
     # posts = Post.query.order_by(Post.timestamp.desc()).all()
     # return render_template('index.html',name = session.get('username'),posts = posts)
 
-@main.route('/post_<int:id>')
+@main.route('/post_<int:id>',methods=['GET','POST'])
 def post_independent(id):
     BlogView.add_view()
     BlogViewToday.add_today_view()
+
     post = Post.query.filter_by(id = id).first()
-    # comment = Comment.query.filter_by(post = post).all()
-    comments = post.comment
-    return render_template('post_independent.html',post = post,comments = comments)
+    form = CommentForm()
+    comments = Comment.query.filter_by(post=post).order_by(Comment.timestamp).all()
+    if form.validate_on_submit():
+        comment = Comment(visitor_name = form.visitor_name.data,
+                          visitor_email = form.visitor_email.data,
+                          content = form.content.data,
+                          post = post)
+        db.session.add(comment)
+        db.session.commit()
+        flash('评论成功!')
+        return redirect(url_for('.post_independent',id = post.id))
+
+
+    return render_template('post_independent.html',post = post,comments = comments,form = form)
 
 @main.route('/about_me')
 def about_me():

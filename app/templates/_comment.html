@@ -12,7 +12,11 @@
             <p class="pull-right">{{ c.timestamp }}</p>
         </div>
         <p>
+            {% if c.content_html %}
+            <em>{{ c.content_html|safe }}</em>
+            {% else %}
             <em>{{ c.content }}</em>
+            {% endif %}
         </p>
     </li>
     {% endfor %}

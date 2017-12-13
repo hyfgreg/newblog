@@ -33,6 +33,40 @@
         <div class="pull-right share">
         </div>
     </footer>
+    <hr>
+    <ul class="pager">
+        <li class="previous"><a href={{url_for(".index")}}>&larr; 回到文章列表</a></li>
+    </ul>
+
+    <div class="well">
+        <h4>添加评论</h4>
+        <form role="form" class="clearfix form" action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class="col-md-6 form-group">
+                {{ form.visitor_name(id="name",class="form-control",placeholder=form.visitor_name.label.text,required=True)}}
+                {% for error in form.errors.visitor_name %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 form-group">
+                {{form.visitor_email(class="form-control" ,id="email",placeholder=form.visitor_email.label.text,required=True)}}
+                {% for error in form.errors.visitor_email %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="col-md-12 form-group">
+                {{ form.content(id="comment", class="input-markdown form-control",placeholder=form.content.label.text,required=True)
+                }}
+                {% for error in form.errors.content %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <div class="col-md-12 form-group text-right">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+
     {% include "_comment.html" %}
 </article>
 
