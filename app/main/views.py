@@ -1,6 +1,6 @@
 from flask import render_template, session, redirect, url_for, current_app, request, flash
 from .. import db
-from ..models import User,Post,BlogView,BlogViewToday,Comment
+from ..models import User,Post,BlogView,BlogViewToday,Comment,Reply
 from ..email import send_email
 from . import main
 from . forms import CommentForm
@@ -27,8 +27,8 @@ def post_independent(id):
     BlogViewToday.add_today_view()
 
     post = Post.query.filter_by(id = id).first()
-    form = CommentForm()
-    comments = Comment.query.filter_by(post=post).order_by(Comment.timestamp).all()
+    form = CommentForm(request.form, repied_id=-1)
+
     if form.validate_on_submit():
         comment = Comment(visitor_name = form.visitor_name.data,
                           visitor_email = form.visitor_email.data,
@@ -36,10 +36,19 @@ def post_independent(id):
                           post = post)
         db.session.add(comment)
         db.session.commit()
+        repied_id = int(form.replied_id.data)
+        if repied_id != -1:
+            replied = Comment.query.get_or_404(repied_id)
+            r = Reply(replier = comment,replied = replied)
+            comment.comment_type='reply'
+            comment.reply_to = replied.visitor_name
+            db.session.add(r)
+            db.session.add(comment)
+            db.session.commit()
         flash('评论成功!')
         return redirect(url_for('.post_independent',id = post.id))
 
-
+    comments = Comment.query.filter_by(post=post).order_by(Comment.timestamp).all()
     return render_template('post_independent.html',post = post,comments = comments,form = form)
 
 @main.route('/about_me')

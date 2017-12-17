@@ -5,11 +5,11 @@
     <li class="comment">
         <div class="clearfix">
             {% if c.comment_type == "comment" %}
-            <h4 class="pull-left">{{ c.visitor_name }}</h4>
+            <h4 class="pull-left"><b>{{ c.visitor_name }}</b></h4>
             {% else %}
-            <h4 class="pull-left">{{ c.visitor_name }} 回复：{{ c.replied_name() }}</h4>
+            <h4 class="pull-left"><b>{{ c.visitor_name }}</b> 回复 <b>{{ c.replied_name() }}</b></h4>
             {% endif %}
-            <p class="pull-right">{{ c.timestamp }}</p>
+
         </div>
         <p>
             {% if c.content_html %}
@@ -18,6 +18,17 @@
             <em>{{ c.content }}</em>
             {% endif %}
         </p>
+        <div class="clearfix">
+            <div class="pull-left"><span class="label label-success glyphicon glyphicon-time">{{ moment(c.timestamp).format('LL') }}</span>
+            </div>
+            <div class="pull-right">
+                <button class="btn btn-info btn-xs"
+                        onclick="go_to_reply({{ c.id }}, '{{ c.visitor_name }}')">
+                    <span class="glyphicon glyphicon-comment"></span> 回复
+                </button>
+            </div>
+        </div>
     </li>
+    <hr>
     {% endfor %}
 </ul>

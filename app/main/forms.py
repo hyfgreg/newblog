@@ -13,4 +13,5 @@ class CommentForm(FlaskForm):
                                 validators=[Length(1, 64), Email(message=u'请输入有效的邮箱地址，比如：username@domain.com'),
                                             DataRequired(message=u'请输入正确邮箱！')])
     content = TextAreaField('尽情发挥！', validators=[DataRequired(message='内容不能为空！')])
+    replied_id = StringField(validators=[DataRequired()])
     submit = SubmitField('提交')

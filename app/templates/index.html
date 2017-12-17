@@ -10,14 +10,6 @@
 {% block page_content %}
 
     <main class="col-md-8 main-content">
-        <div class="post">
-            <h1>你好, {% if name %}{{ name }}{% else %}你是谁？？？{% endif %}!</h1>
-            {% if name %}
-            <p>你已经登录。</p>
-            {% else %}
-            <p>你还没<a href="{{url_for('admin.login')}}">登录</a></p>
-            {% endif %}
-        </div>
         {% include '_newposts.html' %}
         {% if pagination %}
         <div class="pagination" style="float:right">

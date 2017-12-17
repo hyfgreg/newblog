@@ -39,35 +39,16 @@
     </ul>
 
     <div class="well">
-        <h4>添加评论</h4>
-        <form role="form" class="clearfix form" action="" method="post">
-            {{ form.hidden_tag() }}
-            <div class="col-md-6 form-group">
-                {{ form.visitor_name(id="name",class="form-control",placeholder=form.visitor_name.label.text,required=True)}}
-                {% for error in form.errors.visitor_name %}
-                <p class="help-block">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="col-md-6 form-group">
-                {{form.visitor_email(class="form-control" ,id="email",placeholder=form.visitor_email.label.text,required=True)}}
-                {% for error in form.errors.visitor_email %}
-                <p class="help-block">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="col-md-12 form-group">
-                {{ form.content(id="comment", class="input-markdown form-control",placeholder=form.content.label.text,required=True)
-                }}
-                {% for error in form.errors.content %}
-                <p class="help-block">{{ error }}</p>
-                {% endfor %}
-            </div>
-            <div class="col-md-12 form-group text-right">
-                {{ form.submit(class="btn btn-primary") }}
-            </div>
-        </form>
+        <h4 id="submit-comment"><span class="glyphicon glyphicon-comment"> 添加评论</h4>
+        {% include "_comment_form.html" %}
     </div>
 
     {% include "_comment.html" %}
 </article>
 
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/comment_reply.js') }}"></script>
 {% endblock %}
