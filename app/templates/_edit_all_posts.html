@@ -4,7 +4,7 @@
         <h4 class="panel-title">
             文章标题：
             <a target="_blank"  href="{{url_for('main.post_independent',id = post.id)}}">《 {{ post.title }} 》</a>
-            <time class="post-date pull-right"> 撰写时间：{{ moment(post.timestamp).format('LL') }}</time>
+            <time class="post-date pull-right"> 撰写时间：{{ moment(post.timestamp).format('LLL') }}</time>
         </h4>
     </div>
     <div class="panel-body">

@@ -1,0 +1,19 @@
+{% macro pagination_widget(pagination,id) %}
+<ul class="pagination">
+    {% for p in pagination.iter_pages() %}
+    {% if p %}
+    {% if p == pagination.page %}
+    <li class="active">
+        <a href="javascript:void(0)" onclick="go_to_page({{id}}, {{p}})">{{ p }}</a>
+    </li>
+    {% else %}
+    <li>
+        <a href="javascript:void(0)" onclick="go_to_page({{id}}, {{p}})">{{ p }}</a>
+    </li>
+    {% endif %}
+    {% else %}
+    <li class=" disabled"><a href="#">&hellip;</a></li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endmacro %}

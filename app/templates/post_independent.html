@@ -1,5 +1,6 @@
 {% extends "newbase.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros_ajax.html" as macros %}
 
 {% block head %}
 {{super()}}
@@ -44,6 +45,12 @@
     </div>
 
     {% include "_comment.html" %}
+    {% if pagination %}
+    <div class="pagination" style="float:right">
+        {{ macros.pagination_widget(pagination,id=post.id)}}
+    </div>
+    {%endif%}
+
 </article>
 
 {% endblock %}

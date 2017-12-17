@@ -16,8 +16,9 @@ class Config:
     FLASKY_MAIL_SENDER = '小黄的博客 <hyfgreg@163.com>'
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN') or 'hyfgreg@163.com'
     FLASKY_POSTS_PER_PAGE = 20
-    FLASKY_COMMENTS_PER_PAGE = 20
-    RECENT_POSTS = 3
+    FLASKY_COMMENTS_PER_PAGE = 10
+    FLASKY_RECENT_POSTS = 3
+
 
     @staticmethod
     def init_app(app):
